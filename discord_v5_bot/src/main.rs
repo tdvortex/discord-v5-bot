@@ -4,6 +4,7 @@ use serenity::model::id::GuildId;
 use serenity::model::interactions::{Interaction, InteractionResponseType};
 use serenity::prelude::*;
 use std::env;
+use rand::prelude::*;
 
 struct Handler;
 
@@ -15,6 +16,11 @@ impl EventHandler for Handler {
 
             let content = match command.data.name.as_str() {
                 "ping" => "pong".to_string(),
+                "smile" => ":smile:".to_string(),
+                "d10" => {
+                    let face: u8 = thread_rng().gen_range(1..=10);
+                    face.to_string()
+                },
                 _ => "Not implemented".to_string(),
             };
 
@@ -42,9 +48,16 @@ impl EventHandler for Handler {
         );
 
         let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-            commands.create_application_command(|command| {
-                command.name("ping").description("A ping command")
-            })
+            commands
+                .create_application_command(|command| {
+                    command.name("ping").description("A ping command")
+                })
+                .create_application_command(|command| {
+                    command.name("smile").description("Bot smiles back")
+                })
+                .create_application_command(|command| {
+                    command.name("d10").description("Bot rolls a ten-sided die")
+                })
         })
         .await;
 
