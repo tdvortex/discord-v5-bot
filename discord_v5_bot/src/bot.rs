@@ -1,12 +1,12 @@
 use rand::prelude::*;
 use serenity::async_trait;
-use serenity::model::gateway::Ready;
+use serenity::client::{Context, EventHandler};
+use serenity::model::application::interaction::{Interaction, InteractionResponseType};
+use serenity::model::gateway::{GatewayIntents, Ready};
 use serenity::model::id::GuildId;
-use serenity::model::interactions::application_command::{
-    ApplicationCommandInteractionDataOptionValue, ApplicationCommandOptionType,
-};
-use serenity::model::interactions::{Interaction, InteractionResponseType};
-use serenity::prelude::*;
+use serenity::model::prelude::command::CommandOptionType;
+use serenity::model::prelude::interaction::application_command::CommandDataOptionValue;
+use serenity::Client;
 use std::env;
 
 mod roll_dice;
@@ -36,9 +36,7 @@ impl EventHandler for Handler {
                         .as_ref()
                         .expect("Expected number of black dice")
                     {
-                        ApplicationCommandInteractionDataOptionValue::Integer(black_dice) => {
-                            *black_dice as u8
-                        }
+                        CommandDataOptionValue::Integer(black_dice) => *black_dice as u8,
                         _ => 0,
                     };
 
@@ -51,9 +49,7 @@ impl EventHandler for Handler {
                         .as_ref()
                         .expect("Expected number of red dice")
                     {
-                        ApplicationCommandInteractionDataOptionValue::Integer(red_dice) => {
-                            *red_dice as u8
-                        }
+                        CommandDataOptionValue::Integer(red_dice) => *red_dice as u8,
                         _ => 0,
                     };
 
@@ -104,14 +100,14 @@ impl EventHandler for Handler {
                             option
                                 .name("black dice")
                                 .description("Number of black dice to roll")
-                                .kind(ApplicationCommandOptionType::Integer)
+                                .kind(CommandOptionType::Integer)
                                 .required(true)
                         })
                         .create_option(|option| {
                             option
                                 .name("red dice")
                                 .description("Number of red dice to roll")
-                                .kind(ApplicationCommandOptionType::Integer)
+                                .kind(CommandOptionType::Integer)
                                 .required(true)
                         })
                 })
